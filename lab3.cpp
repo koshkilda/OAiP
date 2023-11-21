@@ -23,23 +23,23 @@ void addProductToFile(const Product& product) { //функция добавле�
 }
 
 
-void searchProductByName(const string& name) { //функция поиска продукта по имени
+void searchProductByPrice(const double& maxPrice) { //функция поиска продукта по цене
     ifstream inFile("products.txt");
     if (inFile.is_open()) {
         string line;
         bool found = false;
         while (getline(inFile, line)) {
-            size_t pos = line.find(',');
-            string fullName = line.substr(0, pos);
-            if (fullName == name) {
-                cout << "Найден продукт: " << line << endl;
+            size_t pos1 = line.find_first_of(',');
+            size_t pos2 = line.find_last_of(',');
+            double thatPrice = stod(line.substr(pos1 + 1, pos2 - pos1));
+            if (thatPrice <= maxPrice) {
+                cout << "Найдены продукты: " << line << endl;
                 found = true;
-                break;
             }
         }
         inFile.close();
         if (!found) {
-            cout << "Продукт с таким именем не найден." << endl;
+            cout << "Продукты, цена которых меньше заданной, не найдены." << endl;
         }
     } else {
         cerr << "Не удалось открыть файл для чтения." << endl;
@@ -95,12 +95,12 @@ void sortProductbyNumber() {
 
 int main() {
     int choice;
-    string name;
+    double maxPrice;
 
     do {
         cout << "Меню:" << endl;
         cout << "1. Добавить продукт" << endl;
-        cout << "2. Поиск продукта по названию" << endl;
+        cout << "2. Поиск продуктов по цене" << endl;
         cout << "3. Сортировать продукты по цене" << endl;
         cout << "0. Выйти" << endl;
         cout << "Выберите действие: ";
@@ -130,9 +130,9 @@ int main() {
             }
             case 2: {
                 cin.ignore();
-                cout << "Введите название продукта для поиска: ";
-                getline(cin, name);
-                searchProductByName(name);
+                cout << "Введите максимальную цену продукта для поиска: ";
+                cin >> maxPrice;
+                searchProductByPrice(maxPrice);
                 break;
             }
             case 3: {
